@@ -3,178 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aplikasi Penjualan Daging</title>
+<title>Penjualan Daging</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-  @media (max-width: 768px){
-
-  #dataTable,
-  #dataTable thead,
-  #dataTable tbody,
-  #dataTable tr{
-    display:block;
-    width:100%;
-  }
-
-  #dataTable tr{
-    display:flex;
-    flex-wrap:nowrap;
-    align-items:center;
-    overflow-x:auto;
-    gap:10px;
-    padding:10px;
-    border-bottom:1px solid #e5e7eb;
-  }
-
-  #dataTable td{
-    display:inline-block;
-    white-space:nowrap;
-    font-size:13px;
-    padding:6px 8px;
-  }
-
-  #dataTable td::before{
-    display:none !important;
-  }
-
-  #dataTable td:last-child{
-    display:flex;
-    gap:6px;
-  }
-}
-  @media (pointer: coarse){
-
-  td[data-label="Tanggal"],
-  td[data-label="Kg"],
-  td[data-label="Aksi"]::before{
-    display:none;
-  }
-
-  td{
-    justify-content:flex-start;
-  }
-
-  td[data-label="Nama"]{
-    font-size:16px;
-    font-weight:700;
-    margin-bottom:4px;
-  }
-
-  td[data-label="Jenis"]{
-    color:#475569;
-    font-size:14px;
-    margin-bottom:4px;
-  }
-
-  td[data-label="Total"]{
-    font-size:17px;
-    font-weight:700;
-    color:#16a34a;
-    margin-top:6px;
-  }
-
-  td[data-label="Aksi"]{
-    margin-top:10px;
-  }
-}
-  /* ===========================
-   SUPER FINAL MOBILE FIX 🔥
-   =========================== */
-@media (pointer: coarse){
-
-  body{
-    padding:10px;
-  }
-
-  .container{
-    max-width:100%;
-    padding:16px;
-    border-radius:18px;
-  }
-
-  h2{
-    font-size:22px;
-  }
-
-  label{
-    font-size:15px;
-  }
-
-  input, select{
-    font-size:16px;
-    padding:14px;
-  }
-
-  button{
-    font-size:17px;
-    padding:16px;
-    border-radius:14px;
-  }
-
-  /* ===== TABLE → CARD ===== */
-  table thead{
-    display:none !important;
-  }
-
-  table, tbody, tr, td{
-    display:block !important;
-    width:100% !important;
-  }
-
-  tr{
-    background:#ffffff;
-    margin-bottom:16px;
-    padding:14px;
-    border-radius:16px;
-    box-shadow:0 6px 18px rgba(0,0,0,.12);
-  }
-
-  td{
-    display:flex !important;
-    justify-content:space-between;
-    padding:6px 0;
-    font-size:15px;
-  }
-
-  td::before{
-    content:attr(data-label);
-    font-weight:600;
-    color:#475569;
-  }
-
-  /* ===== AKSI BUTTON ===== */
-  .aksi{
-    flex-direction:column;
-    gap:10px;
-    margin-top:10px;
-  }
-
-  .btn-edit,
-  .btn-hapus{
-    width:100%;
-    padding:14px;
-    font-size:16px;
-    border-radius:12px;
-  }
-}
 body{
   font-family:Arial, sans-serif;
   background:linear-gradient(135deg,#16a34a,#22c55e);
-  padding:20px;
+  padding:16px;
 }
 .container{
   max-width:480px;
   margin:auto;
   background:#fff;
-  padding:20px;
+  padding:18px;
   border-radius:16px;
   box-shadow:0 15px 30px rgba(0,0,0,.15);
 }
-h2{text-align:center;margin-bottom:20px;}
-label{font-weight:bold;margin-top:12px;display:block;}
+h2{text-align:center;margin-bottom:16px;}
+label{font-weight:bold;margin-top:10px;display:block;}
 input,select{
   width:100%;
   padding:12px;
@@ -186,18 +35,18 @@ input,select{
 .readonly{background:#e5e7eb;font-weight:bold;}
 button{
   width:100%;
-  margin-top:14px;
+  margin-top:12px;
   padding:14px;
   border:none;
   border-radius:12px;
   background:#16a34a;
   color:#fff;
   font-size:16px;
-  cursor:pointer;
 }
 button.secondary{background:#0ea5e9;}
 button.wa{background:#25D366;}
 
+/* ===== TABLE ===== */
 table{
   width:100%;
   margin-top:20px;
@@ -206,37 +55,24 @@ table{
 }
 th,td{
   border:1px solid #e5e7eb;
-  padding:8px;
+  padding:8px 10px;
   text-align:center;
+  white-space:nowrap;
 }
 th{background:#f1f5f9;}
 
-.aksi{
-  display:flex;
-  gap:6px;
-  justify-content:center;
-}
-.btn-edit{
-  background:#facc15;
-  border:none;
-  padding:6px 10px;
-  border-radius:8px;
-  font-size:13px;
-}
-.btn-hapus{
-  background:#ef4444;
-  color:#fff;
-  border:none;
-  padding:6px 10px;
-  border-radius:8px;
-  font-size:13px;
-}
+.aksi{display:flex;gap:6px;justify-content:center;}
+.btn-edit{background:#facc15;border:none;padding:6px 10px;border-radius:8px;}
+.btn-hapus{background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:8px;}
 
-
+/* ===== MOBILE: HORIZONTAL KE SAMPING ===== */
+@media(max-width:768px){
+  table{display:block;overflow-x:auto;}
+}
 </style>
 </head>
-
 <body>
+
 <div class="container">
 <h2>Penjualan Daging</h2>
 
@@ -341,9 +177,7 @@ async function simpan(){
   loadData();
 }
 
-function resetForm(){
-  tanggal.value=nama.value=jenis.value=berat.value=harga.value=total.value='';
-}
+function resetForm(){tanggal.value=nama.value=jenis.value=berat.value=harga.value=total.value='';}
 
 async function loadData(){
   const {data}=await db.from('penjualan_daging').select('*').order('id',{ascending:false});
@@ -352,16 +186,14 @@ async function loadData(){
   data.forEach(d=>{
     tb.innerHTML+=`
     <tr>
-      <td data-label="Tanggal">${d.tanggal}</td>
-      <td data-label="Nama">${d.nama}</td>
-      <td data-label="Jenis">${d.jenis}</td>
-      <td data-label="Kg">${d.berat}</td>
-      <td data-label="Total">Rp ${d.total.toLocaleString('id-ID')}</td>
-      <td data-label="Aksi">
-        <div class="aksi">
-          <button class="btn-edit" onclick="edit(${d.id},'${d.tanggal}','${d.nama}','${d.jenis}',${d.berat})">Edit</button>
-          <button class="btn-hapus" onclick="hapus(${d.id})">Hapus</button>
-        </div>
+      <td>${d.tanggal}</td>
+      <td>${d.nama}</td>
+      <td>${d.jenis}</td>
+      <td>${d.berat}</td>
+      <td>Rp ${d.total.toLocaleString('id-ID')}</td>
+      <td class="aksi">
+        <button class="btn-edit" onclick="edit(${d.id},'${d.tanggal}','${d.nama}','${d.jenis}',${d.berat})">Edit</button>
+        <button class="btn-hapus" onclick="hapus(${d.id})">Hapus</button>
       </td>
     </tr>`;
   });
@@ -370,19 +202,9 @@ async function loadData(){
 function edit(id,tgl,nm,jns,brt){
   editId=id;
   tanggal.value=tgl.slice(4)+'-'+tgl.slice(2,4)+'-'+tgl.slice(0,2);
-  nama.value=nm;
-  jenis.value=jns;
-  setHarga();
-  berat.value=brt;
-  hitungTotal();
+  nama.value=nm; jenis.value=jns; setHarga(); berat.value=brt; hitungTotal();
 }
-
-async function hapus(id){
-  if(confirm('Hapus data ini?')){
-    await db.from('penjualan_daging').delete().eq('id',id);
-    loadData();
-  }
-}
+async function hapus(id){ if(confirm('Hapus data ini?')){ await db.from('penjualan_daging').delete().eq('id',id); loadData(); }}
 
 function exportExcel(){
   const rows=[...document.querySelectorAll('#tbody tr')].map(tr=>{
@@ -399,12 +221,7 @@ function shareWA(){
   const r=document.querySelector('#tbody tr');
   if(!r) return;
   const t=r.querySelectorAll('td');
-  const msg=`Penjualan Daging
-Tanggal : ${t[0].innerText}
-Nama : ${t[1].innerText}
-Jenis : ${t[2].innerText}
-Berat : ${t[3].innerText}
-Total : ${t[4].innerText}`;
+  const msg=`Penjualan Daging\nTanggal: ${t[0].innerText}\nNama: ${t[1].innerText}\nJenis: ${t[2].innerText}\nKg: ${t[3].innerText}\nTotal: ${t[4].innerText}`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg));
 }
 
