@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aplikasi Penjualan Daging</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -81,7 +81,7 @@ th{background:#f1f5f9;}
   font-size:13px;
 }
 
-/* ===== MOBILE CARD TABLE ===== */
+/* MOBILE CARD */
 @media (max-width:600px){
   table thead{display:none;}
   table,tbody,tr,td{display:block;width:100%;}
@@ -117,7 +117,7 @@ th{background:#f1f5f9;}
 <input type="date" id="tanggal">
 
 <label>Nama</label>
-<input type="text" id="nama" placeholder="Nama pembeli">
+<input type="text" id="nama">
 
 <label>Jenis Daging</label>
 <select id="jenis" onchange="setHarga()">
@@ -134,37 +134,32 @@ th{background:#f1f5f9;}
 <option>PARU</option>
 </select>
 
-<label>Harga / Kg (Rp)</label>
+<label>Harga / Kg</label>
 <input type="text" id="harga" class="readonly" readonly>
 
 <label>Berat (Kg)</label>
 <input type="number" id="berat" step="0.01" oninput="hitungTotal()">
 
-<label>Total (Rp)</label>
+<label>Total</label>
 <input type="text" id="total" class="readonly" readonly>
 
-<button onclick="tambahData()">Simpan</button>
+<button onclick="simpan()">Simpan</button>
 <button class="secondary" onclick="exportExcel()">Export Excel</button>
 <button class="wa" onclick="shareWA()">Share WhatsApp</button>
 
-<table id="tabel">
+<table>
 <thead>
 <tr>
-<th>Tanggal</th>
-<th>Nama</th>
-<th>Jenis</th>
-<th>Kg</th>
-<th>Total</th>
-<th>Aksi</th>
+<th>Tanggal</th><th>Nama</th><th>Jenis</th><th>Kg</th><th>Total</th><th>Aksi</th>
 </tr>
 </thead>
-<tbody></tbody>
+<tbody id="tbody"></tbody>
 </table>
 </div>
 
 <script>
 const { createClient } = supabase;
-const supabaseClient = createClient(
+const db = createClient(
   'https://gnpjzhwbjeidabxdturx.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImducGp6aHdiamVpZGFieGR0dXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3ODc4NTUsImV4cCI6MjA4MzM2Mzg1NX0.Lsdt0mC1MCPeUATPukRRnXFwEpsaQdNzs927086vxjY'
 );
@@ -182,9 +177,16 @@ const hargaDaging={
   "PARU":85000
 };
 
-let data=[];
-let editIndex=null;
+let editId=null;
 
+function setHarga(){
+  harga.value=jenis.value?hargaDaging[jenis.value].toLocaleString('id-ID'):'';
+  hitungTotal();
+}
+function hitungTotal(){
+  if(!jenis.value||!berat.value) return total.value='';
+  total.value=(hargaDaging[jenis.value]*berat.value).toLocaleString('id-ID');
+}
 function formatTanggal(t){
   const d=new Date(t);
   return String(d.getDate()).padStart(2,'0')+
@@ -192,94 +194,94 @@ function formatTanggal(t){
          d.getFullYear();
 }
 
-function setHarga(){
-  harga.value=jenis.value?hargaDaging[jenis.value].toLocaleString('id-ID'):'';
-  hitungTotal();
-}
-
-function hitungTotal(){
-  if(!jenis.value||!berat.value) return total.value='';
-  total.value=(hargaDaging[jenis.value]*berat.value).toLocaleString('id-ID');
-}
-
-async function tambahData(){
-  if(!tanggal.value||!nama.value||!jenis.value||!berat.value){
-    alert('Lengkapi data'); return;
-  }
-
-  const tglFix=formatTanggal(tanggal.value);
+async function simpan(){
+  const tgl=formatTanggal(tanggal.value);
   const totalHarga=hargaDaging[jenis.value]*berat.value;
 
-  if(editIndex!==null){
-    data[editIndex]={Tanggal:tglFix,Nama:nama.value,Jenis:jenis.value,Kg:berat.value,Total:totalHarga};
-    editIndex=null;
+  if(editId){
+    await db.from('penjualan_daging').update({
+      tanggal:tgl,nama:nama.value,jenis:jenis.value,
+      berat:berat.value,harga:hargaDaging[jenis.value],total:totalHarga
+    }).eq('id',editId);
+    editId=null;
   }else{
-    await supabaseClient.from('penjualan_daging').insert([{
-      tanggal:tglFix,nama:nama.value,jenis:jenis.value,
+    await db.from('penjualan_daging').insert([{
+      tanggal:tgl,nama:nama.value,jenis:jenis.value,
       berat:berat.value,harga:hargaDaging[jenis.value],total:totalHarga
     }]);
-    data.unshift({Tanggal:tglFix,Nama:nama.value,Jenis:jenis.value,Kg:berat.value,Total:totalHarga});
   }
-  render();
+  resetForm();
+  loadData();
 }
 
-function editData(i){
-  const d=data[i];
-  editIndex=i;
-  tanggal.value=d.Tanggal.slice(4)+'-'+d.Tanggal.slice(2,4)+'-'+d.Tanggal.slice(0,2);
-  nama.value=d.Nama;
-  jenis.value=d.Jenis;
-  setHarga();
-  berat.value=d.Kg;
-  hitungTotal();
+function resetForm(){
+  tanggal.value=nama.value=jenis.value=berat.value=harga.value=total.value='';
 }
 
-function hapusData(i){
-  if(confirm('Hapus data ini?')){
-    data.splice(i,1);
-    render();
-  }
-}
-
-function render(){
-  const tb=document.querySelector('#tabel tbody');
+async function loadData(){
+  const {data}=await db.from('penjualan_daging').select('*').order('id',{ascending:false});
+  const tb=document.getElementById('tbody');
   tb.innerHTML='';
-  data.forEach((d,i)=>{
+  data.forEach(d=>{
     tb.innerHTML+=`
     <tr>
-      <td data-label="Tanggal">${d.Tanggal}</td>
-      <td data-label="Nama">${d.Nama}</td>
-      <td data-label="Jenis">${d.Jenis}</td>
-      <td data-label="Kg">${d.Kg}</td>
-      <td data-label="Total">Rp ${d.Total.toLocaleString('id-ID')}</td>
+      <td data-label="Tanggal">${d.tanggal}</td>
+      <td data-label="Nama">${d.nama}</td>
+      <td data-label="Jenis">${d.jenis}</td>
+      <td data-label="Kg">${d.berat}</td>
+      <td data-label="Total">Rp ${d.total.toLocaleString('id-ID')}</td>
       <td data-label="Aksi">
         <div class="aksi">
-          <button class="btn-edit" onclick="editData(${i})">Edit</button>
-          <button class="btn-hapus" onclick="hapusData(${i})">Hapus</button>
+          <button class="btn-edit" onclick="edit(${d.id},'${d.tanggal}','${d.nama}','${d.jenis}',${d.berat})">Edit</button>
+          <button class="btn-hapus" onclick="hapus(${d.id})">Hapus</button>
         </div>
       </td>
     </tr>`;
   });
 }
 
+function edit(id,tgl,nm,jns,brt){
+  editId=id;
+  tanggal.value=tgl.slice(4)+'-'+tgl.slice(2,4)+'-'+tgl.slice(0,2);
+  nama.value=nm;
+  jenis.value=jns;
+  setHarga();
+  berat.value=brt;
+  hitungTotal();
+}
+
+async function hapus(id){
+  if(confirm('Hapus data ini?')){
+    await db.from('penjualan_daging').delete().eq('id',id);
+    loadData();
+  }
+}
+
 function exportExcel(){
-  const ws=XLSX.utils.json_to_sheet(data);
+  const rows=[...document.querySelectorAll('#tbody tr')].map(tr=>{
+    const td=tr.querySelectorAll('td');
+    return {Tanggal:td[0].innerText,Nama:td[1].innerText,Jenis:td[2].innerText,Kg:td[3].innerText,Total:td[4].innerText};
+  });
+  const ws=XLSX.utils.json_to_sheet(rows);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Penjualan');
   XLSX.writeFile(wb,'penjualan_daging.xlsx');
 }
 
 function shareWA(){
-  if(!data.length) return alert('Belum ada data');
-  const d=data[0];
-  const pesan=`Penjualan Daging
-Tanggal : ${d.Tanggal}
-Nama : ${d.Nama}
-Jenis : ${d.Jenis}
-Berat : ${d.Kg} Kg
-Total : Rp ${d.Total.toLocaleString('id-ID')}`;
-  window.open('https://wa.me/?text='+encodeURIComponent(pesan),'_blank');
+  const r=document.querySelector('#tbody tr');
+  if(!r) return;
+  const t=r.querySelectorAll('td');
+  const msg=`Penjualan Daging
+Tanggal : ${t[0].innerText}
+Nama : ${t[1].innerText}
+Jenis : ${t[2].innerText}
+Berat : ${t[3].innerText}
+Total : ${t[4].innerText}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg));
 }
+
+loadData();
 </script>
 </body>
 </html>
