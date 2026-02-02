@@ -82,10 +82,22 @@ th{background:#f1f5f9;}
 }
 
 /* MOBILE CARD */
-@media (max-width:600px){
-  table thead{display:none;}
-  table,tbody,tr,td{display:block;width:100%;}
-  table{border:none;}
+/* ===== FORCE MOBILE (HP) ===== */
+@media (pointer: coarse){
+
+  table thead{
+    display:none !important;
+  }
+
+  table, tbody, tr, td{
+    display:block !important;
+    width:100% !important;
+  }
+
+  table{
+    border:none !important;
+  }
+
   tr{
     background:#f8fafc;
     margin-bottom:14px;
@@ -93,17 +105,23 @@ th{background:#f1f5f9;}
     border-radius:12px;
     box-shadow:0 4px 10px rgba(0,0,0,.08);
   }
+
   td{
-    border:none;
-    display:grid;
+    border:none !important;
+    display:grid !important;
     grid-template-columns:90px 1fr;
     padding:6px 0;
-    text-align:left;
+    text-align:left !important;
   }
+
   td::before{
     content:attr(data-label);
     font-weight:bold;
     color:#334155;
+  }
+
+  .aksi{
+    justify-content:flex-start;
   }
 }
 </style>
