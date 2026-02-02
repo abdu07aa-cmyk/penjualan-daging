@@ -9,6 +9,86 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+  /* ===========================
+   SUPER FINAL MOBILE FIX 🔥
+   =========================== */
+@media (pointer: coarse){
+
+  body{
+    padding:10px;
+  }
+
+  .container{
+    max-width:100%;
+    padding:16px;
+    border-radius:18px;
+  }
+
+  h2{
+    font-size:22px;
+  }
+
+  label{
+    font-size:15px;
+  }
+
+  input, select{
+    font-size:16px;
+    padding:14px;
+  }
+
+  button{
+    font-size:17px;
+    padding:16px;
+    border-radius:14px;
+  }
+
+  /* ===== TABLE → CARD ===== */
+  table thead{
+    display:none !important;
+  }
+
+  table, tbody, tr, td{
+    display:block !important;
+    width:100% !important;
+  }
+
+  tr{
+    background:#ffffff;
+    margin-bottom:16px;
+    padding:14px;
+    border-radius:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,.12);
+  }
+
+  td{
+    display:flex !important;
+    justify-content:space-between;
+    padding:6px 0;
+    font-size:15px;
+  }
+
+  td::before{
+    content:attr(data-label);
+    font-weight:600;
+    color:#475569;
+  }
+
+  /* ===== AKSI BUTTON ===== */
+  .aksi{
+    flex-direction:column;
+    gap:10px;
+    margin-top:10px;
+  }
+
+  .btn-edit,
+  .btn-hapus{
+    width:100%;
+    padding:14px;
+    font-size:16px;
+    border-radius:12px;
+  }
+}
 body{
   font-family:Arial, sans-serif;
   background:linear-gradient(135deg,#16a34a,#22c55e);
@@ -81,49 +161,7 @@ th{background:#f1f5f9;}
   font-size:13px;
 }
 
-/* MOBILE CARD */
-/* ===== FORCE MOBILE (HP) ===== */
-@media (pointer: coarse){
 
-  table thead{
-    display:none !important;
-  }
-
-  table, tbody, tr, td{
-    display:block !important;
-    width:100% !important;
-  }
-
-  table{
-    border:none !important;
-  }
-
-  tr{
-    background:#f8fafc;
-    margin-bottom:14px;
-    padding:12px;
-    border-radius:12px;
-    box-shadow:0 4px 10px rgba(0,0,0,.08);
-  }
-
-  td{
-    border:none !important;
-    display:grid !important;
-    grid-template-columns:90px 1fr;
-    padding:6px 0;
-    text-align:left !important;
-  }
-
-  td::before{
-    content:attr(data-label);
-    font-weight:bold;
-    color:#334155;
-  }
-
-  .aksi{
-    justify-content:flex-start;
-  }
-}
 </style>
 </head>
 
