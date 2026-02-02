@@ -1,86 +1,175 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aplikasi Penjualan Daging</title>  <!-- XLSX -->  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>  <!-- SUPABASE -->  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
-    body{
-      font-family:Arial, sans-serif;
-      background:linear-gradient(135deg,#16a34a,#22c55e);
-      padding:20px;
-    }
-    .container{
-      max-width:480px;
-      margin:auto;
-      background:#fff;
-      padding:20px;
-      border-radius:16px;
-      box-shadow:0 15px 30px rgba(0,0,0,.15);
-    }
-    h2{text-align:center;margin-bottom:20px;}
-    label{font-weight:bold;margin-top:12px;display:block;}
-    input,select{
-      width:100%;
-      padding:12px;
-      margin-top:6px;
-      border-radius:10px;
-      border:1px solid #cbd5e1;
-      font-size:15px;
-    }
-    .readonly{background:#e5e7eb;font-weight:bold;}
-    button{
-      width:100%;
-      margin-top:14px;
-      padding:14px;
-      border:none;
-      border-radius:12px;
-      background:#16a34a;
-      color:#fff;
-      font-size:16px;
-      cursor:pointer;
-    }
-    button.secondary{background:#0ea5e9;}
-    button.wa{background:#25D366;}
-    table{
-      width:100%;
-      margin-top:20px;
-      border-collapse:collapse;
-      font-size:14px;
-    }
-    th,td{border:1px solid #e5e7eb;padding:8px;text-align:center;}
-    th{background:#f1f5f9;}
-  </style></head>
-<body><div class="container">
-  <h2>Penjualan Daging</h2><label>Tanggal</label> <input type="date" id="tanggal" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aplikasi Penjualan Daging</title>
 
-<label>Nama</label> <input type="text" id="nama" placeholder="Nama pembeli" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<label>Jenis Daging</label> <select id="jenis" onchange="setHarga()"> <option value="">-- Pilih --</option> <option>DAGING SEMUR</option> <option>DAGING RENDANG</option> <option>TETELAN</option> <option>LAMUR</option> <option>ATI</option> <option>TUNJANG</option> <option>IGA</option> <option>BUNTUT</option> <option>DAGING KEPALA</option> <option>PARU</option> </select>
+<style>
+body{
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  padding:20px;
+}
+.container{
+  max-width:480px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 15px 30px rgba(0,0,0,.15);
+}
+h2{text-align:center;margin-bottom:20px;}
+label{font-weight:bold;margin-top:12px;display:block;}
+input,select{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:10px;
+  border:1px solid #cbd5e1;
+  font-size:16px;
+}
+.readonly{background:#e5e7eb;font-weight:bold;}
+button{
+  width:100%;
+  margin-top:14px;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#16a34a;
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+}
+button.secondary{background:#0ea5e9;}
+button.wa{background:#25D366;}
 
-<label>Harga / Kg (Rp)</label> <input type="text" id="harga" class="readonly" readonly />
+table{
+  width:100%;
+  margin-top:20px;
+  border-collapse:collapse;
+  font-size:14px;
+}
+th,td{
+  border:1px solid #e5e7eb;
+  padding:8px;
+  text-align:center;
+}
+th{background:#f1f5f9;}
 
-<label>Berat (Kg)</label> <input type="number" id="berat" step="0.01" oninput="hitungTotal()" />
+.aksi{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+}
+.btn-edit{
+  background:#facc15;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:13px;
+}
+.btn-hapus{
+  background:#ef4444;
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:13px;
+}
 
-<label>Total (Rp)</label> <input type="text" id="total" class="readonly" readonly />
+/* ===== MOBILE CARD TABLE ===== */
+@media (max-width:600px){
+  table thead{display:none;}
+  table,tbody,tr,td{display:block;width:100%;}
+  table{border:none;}
+  tr{
+    background:#f8fafc;
+    margin-bottom:14px;
+    padding:12px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+  }
+  td{
+    border:none;
+    display:grid;
+    grid-template-columns:90px 1fr;
+    padding:6px 0;
+    text-align:left;
+  }
+  td::before{
+    content:attr(data-label);
+    font-weight:bold;
+    color:#334155;
+  }
+}
+</style>
+</head>
 
-<button onclick="tambahData()">Simpan</button> <button class="secondary" onclick="exportExcel()">Export Excel</button> <button class="wa" onclick="shareWA()">Share WhatsApp</button>
+<body>
+<div class="container">
+<h2>Penjualan Daging</h2>
 
-  <table id="tabel">
-    <thead>
-      <tr>
-        <th>Tanggal</th><th>Nama</th><th>Jenis</th><th>Kg</th><th>Total</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div><script>
-// === SUPABASE CONFIG ===
+<label>Tanggal</label>
+<input type="date" id="tanggal">
+
+<label>Nama</label>
+<input type="text" id="nama" placeholder="Nama pembeli">
+
+<label>Jenis Daging</label>
+<select id="jenis" onchange="setHarga()">
+<option value="">-- Pilih --</option>
+<option>DAGING SEMUR</option>
+<option>DAGING RENDANG</option>
+<option>TETELAN</option>
+<option>LAMUR</option>
+<option>ATI</option>
+<option>TUNJANG</option>
+<option>IGA</option>
+<option>BUNTUT</option>
+<option>DAGING KEPALA</option>
+<option>PARU</option>
+</select>
+
+<label>Harga / Kg (Rp)</label>
+<input type="text" id="harga" class="readonly" readonly>
+
+<label>Berat (Kg)</label>
+<input type="number" id="berat" step="0.01" oninput="hitungTotal()">
+
+<label>Total (Rp)</label>
+<input type="text" id="total" class="readonly" readonly>
+
+<button onclick="tambahData()">Simpan</button>
+<button class="secondary" onclick="exportExcel()">Export Excel</button>
+<button class="wa" onclick="shareWA()">Share WhatsApp</button>
+
+<table id="tabel">
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Nama</th>
+<th>Jenis</th>
+<th>Kg</th>
+<th>Total</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+
+<script>
 const { createClient } = supabase;
-const SUPABASE_URL = 'https://gnpjzhwbjeidabxdturx.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImducGp6aHdiamVpZGFieGR0dXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3ODc4NTUsImV4cCI6MjA4MzM2Mzg1NX0.Lsdt0mC1MCPeUATPukRRnXFwEpsaQdNzs927086vxjY';
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = createClient(
+  'https://gnpjzhwbjeidabxdturx.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImducGp6aHdiamVpZGFieGR0dXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3ODc4NTUsImV4cCI6MjA4MzM2Mzg1NX0.Lsdt0mC1MCPeUATPukRRnXFwEpsaQdNzs927086vxjY'
+);
 
-// === HARGA ===
-const hargaDaging = {
+const hargaDaging={
   "DAGING SEMUR":125000,
   "DAGING RENDANG":145000,
   "TETELAN":90000,
@@ -93,23 +182,24 @@ const hargaDaging = {
   "PARU":85000
 };
 
-let data = [];
+let data=[];
+let editIndex=null;
 
-function formatTanggal(tgl){
-  const d = new Date(tgl);
-  return String(d.getDate()).padStart(2,'0') +
-         String(d.getMonth()+1).padStart(2,'0') +
+function formatTanggal(t){
+  const d=new Date(t);
+  return String(d.getDate()).padStart(2,'0')+
+         String(d.getMonth()+1).padStart(2,'0')+
          d.getFullYear();
 }
 
 function setHarga(){
-  harga.value = jenis.value ? hargaDaging[jenis.value].toLocaleString('id-ID') : '';
+  harga.value=jenis.value?hargaDaging[jenis.value].toLocaleString('id-ID'):'';
   hitungTotal();
 }
 
 function hitungTotal(){
-  if(!jenis.value || !berat.value) return total.value='';
-  total.value = (hargaDaging[jenis.value]*berat.value).toLocaleString('id-ID');
+  if(!jenis.value||!berat.value) return total.value='';
+  total.value=(hargaDaging[jenis.value]*berat.value).toLocaleString('id-ID');
 }
 
 async function tambahData(){
@@ -117,31 +207,59 @@ async function tambahData(){
     alert('Lengkapi data'); return;
   }
 
-  const tglFix = formatTanggal(tanggal.value);
-  const totalHarga = hargaDaging[jenis.value]*berat.value;
+  const tglFix=formatTanggal(tanggal.value);
+  const totalHarga=hargaDaging[jenis.value]*berat.value;
 
-  const { error } = await supabaseClient
-    .from('penjualan_daging')
-    .insert([{ tanggal:tglFix, nama:nama.value, jenis:jenis.value, berat:berat.value, harga:hargaDaging[jenis.value], total:totalHarga }]);
-
-  if(error){ alert('Gagal simpan'); console.error(error); return; }
-
-  data.unshift({ Tanggal:tglFix, Nama:nama.value, Jenis:jenis.value, Kg:berat.value, Total:totalHarga });
+  if(editIndex!==null){
+    data[editIndex]={Tanggal:tglFix,Nama:nama.value,Jenis:jenis.value,Kg:berat.value,Total:totalHarga};
+    editIndex=null;
+  }else{
+    await supabaseClient.from('penjualan_daging').insert([{
+      tanggal:tglFix,nama:nama.value,jenis:jenis.value,
+      berat:berat.value,harga:hargaDaging[jenis.value],total:totalHarga
+    }]);
+    data.unshift({Tanggal:tglFix,Nama:nama.value,Jenis:jenis.value,Kg:berat.value,Total:totalHarga});
+  }
   render();
+}
+
+function editData(i){
+  const d=data[i];
+  editIndex=i;
+  tanggal.value=d.Tanggal.slice(4)+'-'+d.Tanggal.slice(2,4)+'-'+d.Tanggal.slice(0,2);
+  nama.value=d.Nama;
+  jenis.value=d.Jenis;
+  setHarga();
+  berat.value=d.Kg;
+  hitungTotal();
+}
+
+function hapusData(i){
+  if(confirm('Hapus data ini?')){
+    data.splice(i,1);
+    render();
+  }
 }
 
 function render(){
-  const tb=document.querySelector('#tabel tbody'); tb.innerHTML='';
-  data.forEach(d=>{
-    tb.innerHTML+=`<tr><td>${d.Tanggal}</td><td>${d.Nama}</td><td>${d.Jenis}</td><td>${d.Kg}</td><td>Rp ${d.Total.toLocaleString('id-ID')}</td></tr>`;
+  const tb=document.querySelector('#tabel tbody');
+  tb.innerHTML='';
+  data.forEach((d,i)=>{
+    tb.innerHTML+=`
+    <tr>
+      <td data-label="Tanggal">${d.Tanggal}</td>
+      <td data-label="Nama">${d.Nama}</td>
+      <td data-label="Jenis">${d.Jenis}</td>
+      <td data-label="Kg">${d.Kg}</td>
+      <td data-label="Total">Rp ${d.Total.toLocaleString('id-ID')}</td>
+      <td data-label="Aksi">
+        <div class="aksi">
+          <button class="btn-edit" onclick="editData(${i})">Edit</button>
+          <button class="btn-hapus" onclick="hapusData(${i})">Hapus</button>
+        </div>
+      </td>
+    </tr>`;
   });
-}
-
-async function loadData(){
-  const { data:rows } = await supabaseClient.from('penjualan_daging').select('*').order('id',{ascending:false});
-  if(!rows) return;
-  data = rows.map(r=>({Tanggal:r.tanggal,Nama:r.nama,Jenis:r.jenis,Kg:r.berat,Total:r.total}));
-  render();
 }
 
 function exportExcel(){
@@ -154,10 +272,14 @@ function exportExcel(){
 function shareWA(){
   if(!data.length) return alert('Belum ada data');
   const d=data[0];
-  const pesan=`Penjualan Daging\nTanggal : ${d.Tanggal}\nNama : ${d.Nama}\nJenis : ${d.Jenis}\nBerat : ${d.Kg} Kg\nTotal : Rp ${d.Total.toLocaleString('id-ID')}`;
+  const pesan=`Penjualan Daging
+Tanggal : ${d.Tanggal}
+Nama : ${d.Nama}
+Jenis : ${d.Jenis}
+Berat : ${d.Kg} Kg
+Total : Rp ${d.Total.toLocaleString('id-ID')}`;
   window.open('https://wa.me/?text='+encodeURIComponent(pesan),'_blank');
 }
-
-loadData();
-</script></body>
+</script>
+</body>
 </html>
