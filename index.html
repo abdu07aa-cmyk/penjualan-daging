@@ -9,6 +9,42 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+  @media (max-width: 768px){
+
+  #dataTable,
+  #dataTable thead,
+  #dataTable tbody,
+  #dataTable tr{
+    display:block;
+    width:100%;
+  }
+
+  #dataTable tr{
+    display:flex;
+    flex-wrap:nowrap;
+    align-items:center;
+    overflow-x:auto;
+    gap:10px;
+    padding:10px;
+    border-bottom:1px solid #e5e7eb;
+  }
+
+  #dataTable td{
+    display:inline-block;
+    white-space:nowrap;
+    font-size:13px;
+    padding:6px 8px;
+  }
+
+  #dataTable td::before{
+    display:none !important;
+  }
+
+  #dataTable td:last-child{
+    display:flex;
+    gap:6px;
+  }
+}
   @media (pointer: coarse){
 
   td[data-label="Tanggal"],
