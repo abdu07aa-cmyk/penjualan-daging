@@ -9,18 +9,22 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+html, body{
+  margin:0;
+  padding:0;
+  height:100%;
+}
+
 body{
   font-family:Arial, sans-serif;
   background:linear-gradient(135deg,#16a34a,#22c55e);
-  padding:16px;
 }
 .container{
-  max-width:480px;
-  margin:auto;
+  min-height:100svh;   /* full tinggi layar HP */
+  width:100%;
   background:#fff;
-  padding:18px;
-  border-radius:16px;
-  box-shadow:0 15px 30px rgba(0,0,0,.15);
+  padding:16px;
+  box-sizing:border-box;
 }
 h2{text-align:center;margin-bottom:16px;}
 label{font-weight:bold;margin-top:10px;display:block;}
@@ -35,7 +39,7 @@ input,select{
 .readonly{background:#e5e7eb;font-weight:bold;}
 button{
   width:100%;
-  margin-top:30px;
+  margin-top:16px;
   padding:14px;
   border:none;
   border-radius:12px;
