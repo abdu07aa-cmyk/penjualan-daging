@@ -95,7 +95,7 @@
             <div class="note">✅ Bundles dibulatkan KE ATAS | PO & Brand TETAP setelah simpan</div>
 
             <label>📅 Tanggal</label>
-            <input type="date" id="tanggal" value="2026-04-23">
+            <input type="date" id="tanggal">
 
             <label>📄 No. PI</label>
 <input type="text" id="noPo" placeholder="PI-001">
@@ -355,6 +355,9 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnZ3NwemppYmlzYXBkYW93a2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NjMxNzksImV4cCI6MjA4MzQzOTE3OX0.DtDb10SzKfwJg3bbVq53nG9RIXbZYtitXn67ZtdBMFY';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Set tanggal otomatis ke hari ini setiap kali form dibuka
+        document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
+
         const beratBundleDB = {
             "SINGLE 36X69|13|32":1.09, "SINGLE 36X69|13|33":1.10, "SINGLE 36X69|13|40":1.33,
             "SINGLE 36X69|13|50":1.67, "SINGLE 36X69|13|51":1.69, "SINGLE 36X69|13|60":2.00,
@@ -364,6 +367,7 @@
             "1 1/4 44X78|14|32":1.62, "1 1/4 44X78|14|33":1.65, "1 1/4 44X78|14|35":1.75,
             "1 1/4 44X78|14|40":2.08, "1 1/4 44X78|14|42":2.21, "1 1/4 44X78|14|50":2.50,
             "1 1/4 44X78|14|51":2.58, "1 1/4 44X78|14|52":2.64,
+            "1 1/4 44X78|20|51":3.60,
             "CLEAR PAPER 1 1/4 44X78|35|50":5.75,
             "KS 54X97|14|32":2.50, "KS 54X97|14|33":2.58, "KS 54X97|14|40":3.05, "KS 54X97|14|50":3.82,
             "KS 54X97|20|32":4.34, "KS 54X97|20|33":4.42, "KS 54X97|20|40":5.22, "KS 54X97|20|50":6.32,
